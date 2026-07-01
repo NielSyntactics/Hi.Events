@@ -20,3 +20,4 @@ prompts/
 
 /plans/**
 /plans
+.env
