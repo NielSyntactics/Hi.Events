@@ -47,12 +47,19 @@ case "$CERTS_FLAG" in
         ;;
 esac
 
-$COMPOSE_CMD up -d
+echo -e "${GREEN}Starting Docker containers (backend services only)...${NC}"
+# Don't start frontend in Docker - it runs locally for development
+$COMPOSE_CMD up -d --scale frontend=0
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}Failed to start services with docker-compose.${NC}"
     exit 1
 fi
+
+# Stop frontend container if it's running from a previous start
+echo -e "${GREEN}Ensuring frontend container is stopped...${NC}"
+$COMPOSE_CMD stop frontend 2>/dev/null || true
+$COMPOSE_CMD rm -f frontend 2>/dev/null || true
 
 echo -e "${GREEN}Running composer install in the backend service...${NC}"
 

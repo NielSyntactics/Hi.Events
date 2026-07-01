@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
-const { exec } = require('child_process');
+const { exec, execFile } = require('child_process');
 const path = require('path');
 
 const dockerPath = path.join(__dirname, '../docker/development');
 const isWindows = process.platform === 'win32';
-const shell = isWindows ? 'bash' : '/bin/bash';
 
 function runCommand(command, cwd = process.cwd()) {
   return new Promise((resolve, reject) => {
-    const child = exec(command, { cwd, shell }, (error, stdout, stderr) => {
+    const options = {
+      cwd,
+      shell: isWindows ? true : '/bin/bash',
+      maxBuffer: 10 * 1024 * 1024  // 10MB buffer
+    };
+
+    const child = exec(command, options, (error, stdout, stderr) => {
       if (error) {
         reject(new Error(`${command} failed: ${error.message}`));
       } else {
@@ -25,7 +30,13 @@ function runCommand(command, cwd = process.cwd()) {
 async function setup() {
   try {
     console.log('\n🐳 Starting Docker containers...\n');
-    await runCommand('bash ./start-dev.sh', dockerPath);
+
+    // Use appropriate startup script for Windows vs Unix
+    const startupCmd = isWindows
+      ? 'powershell -NoProfile -ExecutionPolicy Bypass -File ./start-dev.ps1'
+      : 'bash ./start-dev.sh';
+
+    await runCommand(startupCmd, dockerPath);
 
     console.log('\n⏳ Waiting for containers to be ready...\n');
     await new Promise(r => setTimeout(r, 5000));
