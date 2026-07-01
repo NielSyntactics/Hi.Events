@@ -1,0 +1,12 @@
+{
+  "name": "hievents",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:setup": "node scripts/setup-dev.js",
+    "dev:all": "concurrently --names \"setup,frontend\" --prefix-colors \"blue,cyan\" --kill-others \"npm run dev:setup\" \"cd frontend && npm run dev:ssr\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
