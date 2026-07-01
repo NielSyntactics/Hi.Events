@@ -4,7 +4,13 @@
   "private": true,
   "scripts": {
     "dev:setup": "node scripts/setup-dev.js",
-    "dev:all": "concurrently --names \"setup,frontend\" --prefix-colors \"blue,cyan\" --kill-others \"npm run dev:setup\" \"cd frontend && npm run dev:ssr\""
+    "dev:all": "concurrently --names \"setup,frontend\" --prefix-colors \"blue,cyan\" --kill-others \"npm run dev:setup\" \"cd frontend && npm run dev:ssr\"",
+    "dev:frontend": "cd frontend && tsc --noEmit && npm run dev:ssr",
+    "dev:frontend:fast": "cd frontend && npm run dev:ssr",
+    "install:all": "concurrently --names \"frontend,backend\" --prefix-colors \"cyan,yellow\" \"cd frontend && npm install\" \"cd backend && composer install\"",
+    "dev:backend": "concurrently --names \"artisan,queue\" --prefix-colors \"magenta,green\" --kill-others \"cd backend && php artisan serve\" \"cd backend && php artisan queue:listen\"",
+    "dev:full": "concurrently --names \"frontend,artisan,queue\" --prefix-colors \"cyan,magenta,green\" --kill-others \"cd frontend && npm run dev:ssr\" \"cd backend && php artisan serve\" \"cd backend && php artisan queue:listen\"",
+    "migrate:fresh": "cd backend && php artisan migrate:fresh && php artisan generate-domain-objects"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
