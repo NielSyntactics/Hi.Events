@@ -11,6 +11,8 @@ export const useCreateOrganizer = () => {
             organizerData: Partial<Organizer>
         }) => organizerClient.create(organizerData),
 
-        onSuccess: () => queryClient.invalidateQueries({queryKey: [GET_ORGANIZERS_QUERY_KEY]})
+        onSuccess: async () => {
+            await queryClient.refetchQueries({queryKey: [GET_ORGANIZERS_QUERY_KEY]});
+        }
     });
 }

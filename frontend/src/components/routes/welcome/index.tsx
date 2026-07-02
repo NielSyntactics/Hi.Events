@@ -1,5 +1,5 @@
 import {useGetMe} from "../../../queries/useGetMe.ts";
-import {useGetOrganizers} from "../../../queries/useGetOrganizers.ts";
+import {useGetOrganizers, GET_ORGANIZERS_QUERY_KEY} from "../../../queries/useGetOrganizers.ts";
 import {t, Trans} from "@lingui/macro";
 import {Card} from "../../common/Card";
 import {Button, Center, Container, PinInput, Select, Stack, Text, TextInput} from "@mantine/core";
@@ -23,9 +23,11 @@ import {EventCategories} from "../../../constants/eventCategories.ts";
 import {getConfig} from "../../../utilites/config.ts";
 import {trackEvent, AnalyticsEvents} from "../../../utilites/analytics.ts";
 import {getDateTimePickerFormat} from "../../../utilites/dates.ts";
+import {useQueryClient} from "@tanstack/react-query";
 
-export const CreateOrganizer = ({progressInfo}: {
-    progressInfo?: { currentStep: number, totalSteps: number, progressPercentage: number }
+export const CreateOrganizer = ({progressInfo, onOrganizerCreated}: {
+    progressInfo?: { currentStep: number, totalSteps: number, progressPercentage: number },
+    onOrganizerCreated?: () => void
 }) => {
     return (
         <div className={classes.stepContainer}>
@@ -46,7 +48,7 @@ export const CreateOrganizer = ({progressInfo}: {
                 </p>
             </div>
             <div className={classes.stepContent}>
-                <OrganizerCreateForm/>
+                <OrganizerCreateForm onSuccess={onOrganizerCreated}/>
             </div>
         </div>
     );
@@ -446,6 +448,7 @@ const Welcome = () => {
     const organizers = organizersQuery?.data?.data;
     const organizerExists = organizersQuery.isFetched && Number(organizers?.length) > 0;
     const hasTrackedSignup = useRef(false);
+    const queryClient = useQueryClient();
 
     const requiresVerification = userData
         && userData.enforce_email_confirmation_during_registration
@@ -462,6 +465,10 @@ const Welcome = () => {
             trackEvent(AnalyticsEvents.SIGNUP_COMPLETED);
         }
     }, [userData]);
+
+    const handleOrganizerCreated = () => {
+        // Mutation already refetches organizers on success
+    };
 
     return (
         <div className={classes.welcomeContainer}>
@@ -483,7 +490,8 @@ const Welcome = () => {
                     {(!requiresVerification && organizerExists) &&
                         <CreateEvent progressInfo={getProgressInfo(requiresVerification, organizerExists, 'event')}/>}
                     {(!requiresVerification && !organizerExists) && <CreateOrganizer
-                        progressInfo={getProgressInfo(requiresVerification, organizerExists, 'organizer')}/>}
+                        progressInfo={getProgressInfo(requiresVerification, organizerExists, 'organizer')}
+                        onOrganizerCreated={handleOrganizerCreated}/>}
                 </Card>
 
                 {(!requiresVerification && organizerExists) && (

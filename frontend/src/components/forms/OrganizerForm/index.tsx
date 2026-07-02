@@ -95,15 +95,17 @@ export const OrganizerCreateForm = ({onSuccess, onCancel}: OrganizerFormProps) =
     }
 
     useEffect(() => {
-        if (meFetched) {
-            form.setFieldValue('currency', String(account?.currency_code));
-        }
         if (accountFetched) {
-            form.setFieldValue('name', String(account?.name));
-            form.setFieldValue('email', String(me?.email));
-            form.setFieldValue('timezone', String(me?.timezone));
+            form.setFieldValue('currency', account?.currency_code ?? '');
+            form.setFieldValue('name', account?.name ?? '');
         }
-    }, [accountFetched, meFetched]);
+        if (meFetched) {
+            form.setFieldValue('email', me?.email ?? '');
+            if (me?.timezone) {
+                form.setFieldValue('timezone', me.timezone);
+            }
+        }
+    }, [accountFetched, meFetched, account, me]);
 
     return (
         <LoadingContainer>
