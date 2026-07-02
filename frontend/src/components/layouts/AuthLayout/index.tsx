@@ -122,7 +122,7 @@ const AuthLayout = () => {
         }
     }, []);
 
-    if (me.isSuccess) {
+    if (me.data) {
         return <Navigate to={'/manage/events'} />
     }
 

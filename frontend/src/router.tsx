@@ -13,7 +13,7 @@ const Root = () => {
     useEffect(() => {
         if (me.isFetched) {
             const searchParams = typeof window !== 'undefined' ? window.location.search : '';
-            const basePath = me.isSuccess ? "/manage/events" : "/auth/login";
+            const basePath = me.data ? "/manage/events" : "/auth/login";
             setRedirectPath(basePath + searchParams);
         }
     }, [me.isFetched]);

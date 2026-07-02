@@ -5,12 +5,16 @@ import {accountClient} from "../api/account.client.ts";
 export const GET_ACCOUNT_QUERY_KEY = 'getAccount';
 
 export const useGetAccount = () => {
-    return useQuery<Account>({
+    return useQuery<Account | null>({
         queryKey: [GET_ACCOUNT_QUERY_KEY],
 
         queryFn: async () => {
-            const {data} = await accountClient.getAccount();
-            return data;
+            try {
+                const {data} = await accountClient.getAccount();
+                return data ?? null;
+            } catch {
+                return null;
+            }
         }
     });
 };
