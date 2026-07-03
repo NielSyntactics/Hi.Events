@@ -4,6 +4,25 @@ import {getConfig} from "../utilites/config";
 
 export const publicApi = axios.create({
     withCredentials: true,
+    transformResponse: [(data) => {
+        if (typeof data === 'string') {
+            try {
+                const jsonStart = data.indexOf('{');
+                const jsonEnd = data.lastIndexOf('}');
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                    const jsonStr = data.substring(jsonStart, jsonEnd + 1);
+                    return JSON.parse(jsonStr);
+                }
+            } catch (e) {
+                // If extraction/parsing fails, try default JSON parsing
+            }
+        }
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            return data;
+        }
+    }]
 });
 
 publicApi.interceptors.request.use((config) => {
