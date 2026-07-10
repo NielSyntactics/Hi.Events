@@ -28,6 +28,14 @@
 {{ __('Please follow the instructions below to complete your payment.') }}
 {!! $eventSettings->getOfflinePaymentInstructions() !!}
 </div>
+
+@if($order->getPaymentReceiptUrl())
+<div style="margin-bottom: 1.5rem;">
+<h3>{{ __('Payment Receipt') }}</h3>
+<p>{{ __('A payment receipt has been uploaded with your order.') }}</p>
+<img src="{{ $order->getPaymentReceiptUrl() }}" alt="{{ __('Payment Receipt') }}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0;"/>
+</div>
+@endif
 </div>
 
 @endif

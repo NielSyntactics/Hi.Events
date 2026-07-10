@@ -20,6 +20,14 @@
 </div>
 @endif
 
+@if($order->getPaymentReceiptUrl())
+<div style="margin-bottom: 1.5rem;">
+<h3>{{ __('Payment Receipt') }}</h3>
+<p>{{ __('The buyer has uploaded a payment receipt.') }}</p>
+<img src="{{ $order->getPaymentReceiptUrl() }}" alt="{{ __('Payment Receipt') }}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0;"/>
+</div>
+@endif
+
 {{ __('Name') }}: <b>{{ $order->getFullName() }}</b><br>
 {{ __('Email') }}: <b>{{ $order->getEmail() }}</b><br>
 {{ __('Order Amount:') }} <b>{{ Currency::format($order->getTotalGross(), $event->getCurrency()) }}</b><br>
