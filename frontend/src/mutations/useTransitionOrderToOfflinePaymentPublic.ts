@@ -4,11 +4,12 @@ import {useMutation} from "@tanstack/react-query";
 
 export const useTransitionOrderToOfflinePaymentPublic = () => {
     return useMutation({
-        mutationFn: ({eventId, orderShortId}: {
+        mutationFn: ({eventId, orderShortId, paymentReceiptUrl}: {
             eventId: IdParam,
             orderShortId: IdParam,
+            paymentReceiptUrl?: string,
         }) => {
-            return orderClientPublic.transitionToOfflinePayment(eventId, orderShortId);
+            return orderClientPublic.transitionToOfflinePayment(eventId, orderShortId, paymentReceiptUrl);
         }
     });
 }

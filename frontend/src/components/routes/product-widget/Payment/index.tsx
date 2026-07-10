@@ -19,6 +19,7 @@ import {showError} from "../../../../utilites/notifications.tsx";
 import {getConfig} from "../../../../utilites/config.ts";
 import classes from "./Payment.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
+import {imageClient} from "../../../../api/image.client.ts";
 
 const Payment = () => {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ const Payment = () => {
     const [isPaymentLoading, setIsPaymentLoading] = useState(false);
     const [activePaymentMethod, setActivePaymentMethod] = useState<'STRIPE' | 'OFFLINE' | null>(null);
     const [submitHandler, setSubmitHandler] = useState<(() => Promise<void>) | null>(null);
+    const [receiptFile, setReceiptFile] = useState<File | null>(null);
     const transitionOrderToOfflinePaymentMutation = useTransitionOrderToOfflinePaymentPublic();
 
     const isStripeEnabled = event?.settings?.payment_providers?.includes('STRIPE');
@@ -61,22 +63,36 @@ const Payment = () => {
         if (activePaymentMethod === 'STRIPE') {
             handleParentSubmit();
         } else if (activePaymentMethod === 'OFFLINE') {
+            if (!receiptFile) {
+                showError(t`Please select a payment receipt image before continuing.`);
+                return;
+            }
+
             setIsPaymentLoading(true);
 
-            await transitionOrderToOfflinePaymentMutation.mutateAsync({
-                eventId,
-                orderShortId
-            }, {
-                onSuccess: () => {
-                    const totalCents = Math.round((order?.total_gross || 0) * 100);
-                    trackEvent(AnalyticsEvents.PURCHASE_COMPLETED_OFFLINE, { value: totalCents });
-                    navigate(`/checkout/${eventId}/${orderShortId}/summary`);
-                },
-                onError: (error: any) => {
-                    setIsPaymentLoading(false);
-                    showError(error.response?.data?.message || t`Offline payment failed. Please try again or contact the event organizer.`);
-                }
-            });
+            try {
+                const uploadResponse = await imageClient.uploadPaymentReceipt(eventId, orderShortId, receiptFile);
+                const paymentReceiptUrl = uploadResponse.data.url;
+
+                await transitionOrderToOfflinePaymentMutation.mutateAsync({
+                    eventId,
+                    orderShortId,
+                    paymentReceiptUrl,
+                }, {
+                    onSuccess: () => {
+                        const totalCents = Math.round((order?.total_gross || 0) * 100);
+                        trackEvent(AnalyticsEvents.PURCHASE_COMPLETED_OFFLINE, { value: totalCents });
+                        navigate(`/checkout/${eventId}/${orderShortId}/summary`);
+                    },
+                    onError: (error: any) => {
+                        setIsPaymentLoading(false);
+                        showError(error.response?.data?.message || t`Offline payment failed. Please try again or contact the event organizer.`);
+                    }
+                });
+            } catch (error: any) {
+                setIsPaymentLoading(false);
+                showError(error.response?.data?.message || t`Failed to upload receipt. Please try again.`);
+            }
         }
     };
 
@@ -104,7 +120,10 @@ const Payment = () => {
 
                 {isOfflineEnabled && (
                     <div style={{display: activePaymentMethod === 'OFFLINE' ? 'block' : 'none'}}>
-                        <OfflinePaymentMethod event={event as Event}/>
+                        <OfflinePaymentMethod
+                            event={event as Event}
+                            onFileChange={setReceiptFile}
+                        />
                     </div>
                 )}
 
@@ -138,6 +157,7 @@ const Payment = () => {
                     <Button
                         className={classes.continueButton}
                         loading={isLoading || isPaymentLoading}
+                        disabled={activePaymentMethod === 'OFFLINE' && !receiptFile}
                         onClick={handleSubmit}
                     >
                         {order?.is_payment_required ? (

@@ -40,6 +40,7 @@ class OrderResourcePublic extends BaseResource
             'is_payment_required' => $this->isPaymentRequired(),
             'promo_code' => $this->getPromoCode(),
             'taxes_and_fees_rollup' => $this->getTaxesAndFeesRollup(),
+            'payment_receipt_url' => $this->getPaymentReceiptUrl(),
             'event' => $this->when(
                 !is_null($this->getEvent()),
                 fn() => new EventResourcePublic(

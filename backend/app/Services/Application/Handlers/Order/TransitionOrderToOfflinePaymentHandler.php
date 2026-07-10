@@ -61,7 +61,11 @@ class TransitionOrderToOfflinePaymentHandler
 
             $this->validateOfflinePayment($order, $eventSettings);
 
-            $this->updateOrderStatuses($order->getId());
+            if (empty($dto->paymentReceiptUrl)) {
+                throw new ResourceConflictException(__('A payment receipt image must be uploaded before completing offline payment.'));
+            }
+
+            $this->updateOrderStatuses($order->getId(), $dto->paymentReceiptUrl);
 
             $this->productQuantityUpdateService->updateQuantitiesFromOrder($order);
 
@@ -86,14 +90,20 @@ class TransitionOrderToOfflinePaymentHandler
         });
     }
 
-    private function updateOrderStatuses(int $orderId): void
+    private function updateOrderStatuses(int $orderId, ?string $paymentReceiptUrl = null): void
     {
+        $data = [
+            OrderDomainObjectAbstract::PAYMENT_STATUS => OrderPaymentStatus::AWAITING_OFFLINE_PAYMENT->name,
+            OrderDomainObjectAbstract::STATUS => OrderStatus::AWAITING_OFFLINE_PAYMENT->name,
+            OrderDomainObjectAbstract::PAYMENT_PROVIDER => PaymentProviders::OFFLINE->value,
+        ];
+
+        if ($paymentReceiptUrl !== null) {
+            $data[OrderDomainObjectAbstract::PAYMENT_RECEIPT_URL] = $paymentReceiptUrl;
+        }
+
         $this->orderRepository
-            ->updateFromArray($orderId, [
-                OrderDomainObjectAbstract::PAYMENT_STATUS => OrderPaymentStatus::AWAITING_OFFLINE_PAYMENT->name,
-                OrderDomainObjectAbstract::STATUS => OrderStatus::AWAITING_OFFLINE_PAYMENT->name,
-                OrderDomainObjectAbstract::PAYMENT_PROVIDER => PaymentProviders::OFFLINE->value,
-            ]);
+            ->updateFromArray($orderId, $data);
     }
 
     /**

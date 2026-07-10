@@ -44,6 +44,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     final public const NOTES = 'notes';
     final public const STATISTICS_DECREMENTED_AT = 'statistics_decremented_at';
     final public const OPTED_INTO_MARKETING_AT = 'opted_into_marketing_at';
+    final public const PAYMENT_RECEIPT_URL = 'payment_receipt_url';
 
     protected int $id;
     protected int $event_id;
@@ -79,6 +80,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     protected ?string $notes = null;
     protected ?string $statistics_decremented_at = null;
     protected ?string $opted_into_marketing_at = null;
+    protected ?string $payment_receipt_url = null;
 
     public function toArray(): array
     {
@@ -117,6 +119,7 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
                     'notes' => $this->notes ?? null,
                     'statistics_decremented_at' => $this->statistics_decremented_at ?? null,
                     'opted_into_marketing_at' => $this->opted_into_marketing_at ?? null,
+                    'payment_receipt_url' => $this->payment_receipt_url ?? null,
                 ];
     }
 
@@ -492,5 +495,16 @@ abstract class OrderDomainObjectAbstract extends \HiEvents\DomainObjects\Abstrac
     public function getOptedIntoMarketingAt(): ?string
     {
         return $this->opted_into_marketing_at;
+    }
+
+    public function setPaymentReceiptUrl(?string $payment_receipt_url): self
+    {
+        $this->payment_receipt_url = $payment_receipt_url;
+        return $this;
+    }
+
+    public function getPaymentReceiptUrl(): ?string
+    {
+        return $this->payment_receipt_url;
     }
 }

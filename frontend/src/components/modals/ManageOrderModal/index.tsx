@@ -7,8 +7,8 @@ import {AttendeeList} from "../../common/AttendeeList";
 import {OrderDetails} from "../../common/OrderDetails";
 import {t} from "@lingui/macro";
 import {QuestionAndAnswerList} from "../../common/QuestionAndAnswerList";
-import {Box, Stack, Tabs, Text, Textarea, TextInput} from "@mantine/core";
-import {IconEdit, IconInfoCircle, IconNotebook, IconQuestionMark, IconReceipt, IconUsers} from "@tabler/icons-react";
+import {Box, Image, Stack, Tabs, Text, Textarea, TextInput} from "@mantine/core";
+import {IconEdit, IconInfoCircle, IconNotebook, IconPhoto, IconQuestionMark, IconReceipt, IconUsers} from "@tabler/icons-react";
 import {OrderStatusBadge} from "../../common/OrderStatusBadge";
 import {Accordion, AccordionItem} from "../../common/Accordion";
 import {useForm} from "@mantine/form";
@@ -98,6 +98,23 @@ export const ManageOrderModal = ({onClose, orderId}: GenericModalProps & ManageO
                     </Text>
                 </Box>
             ),
+        },
+        {
+            value: "receipt",
+            icon: IconPhoto,
+            title: t`Payment Receipt`,
+            hidden: !order.payment_receipt_url,
+            content: order.payment_receipt_url ? (
+                <Box p="md">
+                    <Image
+                        src={order.payment_receipt_url}
+                        alt={t`Payment receipt`}
+                        radius="sm"
+                        fit="contain"
+                        h={300}
+                    />
+                </Box>
+            ) : null,
         },
         {
             value: 'summary',

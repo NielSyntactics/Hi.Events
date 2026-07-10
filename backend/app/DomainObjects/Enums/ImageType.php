@@ -3,6 +3,7 @@
 namespace HiEvents\DomainObjects\Enums;
 
 use HiEvents\DomainObjects\EventDomainObject;
+use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\DomainObjects\UserDomainObject;
 use InvalidArgumentException;
@@ -20,6 +21,9 @@ enum ImageType
     // Organizer images
     case ORGANIZER_LOGO;
     case ORGANIZER_COVER;
+
+    // Order images
+    case ORDER_PAYMENT_RECEIPT;
 
     public static function eventImageTypes(): array
     {
@@ -52,6 +56,7 @@ enum ImageType
             self::TICKET_LOGO->name => [100, 100],
             self::ORGANIZER_LOGO->name => [100, 100],
             self::ORGANIZER_COVER->name => [600, 50],
+            self::ORDER_PAYMENT_RECEIPT->name => [50, 50],
         ];
 
         return $map[$imageType->name] ?? $map[self::GENERIC->name];
@@ -65,6 +70,10 @@ enum ImageType
 
         if (in_array($this, self::organizerImageTypes())) {
             return OrganizerDomainObject::class;
+        }
+
+        if ($this === self::ORDER_PAYMENT_RECEIPT) {
+            return OrderDomainObject::class;
         }
 
         if (in_array($this, self::genericImageTypes())) {

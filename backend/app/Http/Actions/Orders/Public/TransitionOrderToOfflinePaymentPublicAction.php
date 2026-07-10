@@ -22,6 +22,7 @@ class TransitionOrderToOfflinePaymentPublicAction extends BaseAction
         $order = $this->initializeOrderOfflinePaymentPublicHandler->handle(
             TransitionOrderToOfflinePaymentPublicDTO::fromArray([
                 'orderShortId' => $orderShortId,
+                'paymentReceiptUrl' => $request->input('payment_receipt_url'),
             ]),
         );
 

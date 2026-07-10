@@ -163,8 +163,10 @@ export const orderClientPublic = {
         return response.data;
     },
 
-    transitionToOfflinePayment: async (eventId: IdParam, orderShortId: IdParam) => {
-        const response = await publicApi.post<GenericDataResponse<Order>>(`events/${eventId}/order/${orderShortId}/await-offline-payment`);
+    transitionToOfflinePayment: async (eventId: IdParam, orderShortId: IdParam, paymentReceiptUrl?: string) => {
+        const response = await publicApi.post<GenericDataResponse<Order>>(`events/${eventId}/order/${orderShortId}/await-offline-payment`, {
+            payment_receipt_url: paymentReceiptUrl,
+        });
         return response.data;
     },
 
