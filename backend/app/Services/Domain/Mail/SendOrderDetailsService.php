@@ -10,7 +10,6 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Mail\Order\OrderFailed;
-use HiEvents\Mail\Order\OrderSummary;
 use HiEvents\Mail\Organizer\OrderSummaryForOrganizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -106,14 +105,6 @@ class SendOrderDetailsService
 
     private function sendOrderSummaryEmails(OrderDomainObject $order, EventDomainObject $event): void
     {
-        $this->sendCustomerOrderSummary(
-            order: $order,
-            event: $event,
-            organizer: $event->getOrganizer(),
-            eventSettings: $event->getEventSettings(),
-            invoice: $order->getLatestInvoice(),
-        );
-
         if ($order->getIsManuallyCreated() || !$event->getEventSettings()->getNotifyOrganizerOfNewOrders()) {
             return;
         }
