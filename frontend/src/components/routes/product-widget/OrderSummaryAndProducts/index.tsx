@@ -150,7 +150,7 @@ const DetailItem = ({icon: Icon, label, value}: { icon: any, label: string, valu
             <Icon size={20} style={{color: 'var(--checkout-accent, var(--mantine-color-gray-6))', flexShrink: 0}}/>
             <div className={classes.detailContent}>
                 <Text size="sm" c="dimmed" className={classes.label}>{label}</Text>
-                <Text className={classes.value}>{value}</Text>
+                <Text component="span" className={classes.value}>{value}</Text>
             </div>
         </Group>
     </div>

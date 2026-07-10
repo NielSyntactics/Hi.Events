@@ -408,8 +408,8 @@ const SelectProducts = (props: SelectProductsProps) => {
             )}
             {(event && productAreAvailable) && (
                 <form target={'__blank'} onSubmit={form.onSubmit(handleProductSelection as any)}>
-                    <Input type={'hidden'} {...form.getInputProps('promo_code')} />
-                    <Input type={'hidden'} {...form.getInputProps('affiliate_code')} />
+                    <Input type={'hidden'} {...form.getInputProps('promo_code')} value={form.values.promo_code || ''} />
+                    <Input type={'hidden'} {...form.getInputProps('affiliate_code')} value={form.values.affiliate_code || ''} />
                     <div className={'hi-product-category-rows'}>
                         {productCategories && productCategories.map((category) => {
                             return (
