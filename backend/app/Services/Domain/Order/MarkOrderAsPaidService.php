@@ -111,7 +111,7 @@ class MarkOrderAsPaidService
 
             $this->storeApplicationFeePayment($updatedOrder);
 
-            $this->sendOrderDetailsService->sendCustomerOrderSummary(
+            $this->sendOrderDetailsService->sendOrderMarkedAsPaidEmail(
                 order: $updatedOrder,
                 event: $event,
                 organizer: $event->getOrganizer(),

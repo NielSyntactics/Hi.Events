@@ -10,6 +10,7 @@ use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Mail\Order\OrderFailed;
+use HiEvents\Mail\Order\OrderMarkedAsPaid;
 use HiEvents\Mail\Organizer\OrderSummaryForOrganizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -81,6 +82,25 @@ class SendOrderDetailsService
             ->to($order->getEmail())
             ->locale($order->getLocale())
             ->send($mail);
+    }
+
+    public function sendOrderMarkedAsPaidEmail(
+        OrderDomainObject        $order,
+        EventDomainObject        $event,
+        OrganizerDomainObject    $organizer,
+        EventSettingDomainObject $eventSettings,
+        ?InvoiceDomainObject     $invoice = null
+    ): void {
+        $this->mailer
+            ->to($order->getEmail())
+            ->locale($order->getLocale())
+            ->send(new OrderMarkedAsPaid(
+                order: $order,
+                event: $event,
+                organizer: $organizer,
+                eventSettings: $eventSettings,
+                invoice: $invoice,
+            ));
     }
 
     private function sendAttendeeTicketEmails(OrderDomainObject $order, EventDomainObject $event): void
