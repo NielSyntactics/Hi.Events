@@ -30,10 +30,10 @@
 </div>
 
 @if($order->getPaymentReceiptUrl())
-<div style="margin-bottom: 1.5rem;">
-<h3>{{ __('Payment Receipt') }}</h3>
-<p>{{ __('A payment receipt has been uploaded with your order.') }}</p>
-<img src="{{ $order->getPaymentReceiptUrl() }}" alt="{{ __('Payment Receipt') }}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0;"/>
+<div style="border-radius: 4px; background-color: #f0fdf4; color: #166534; margin-bottom: 1.5rem; padding: 1rem;">
+<h3 style="margin-top: 0;">{{ __('Payment Receipt') }}</h3>
+<p style="margin-bottom: 0.75rem;">{{ __('A payment receipt has been uploaded with your order.') }}</p>
+<img src="{{ $order->getPaymentReceiptUrl() }}" alt="{{ __('Payment Receipt') }}" style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #bbf7d0; display: block;"/>
 </div>
 @endif
 </div>
