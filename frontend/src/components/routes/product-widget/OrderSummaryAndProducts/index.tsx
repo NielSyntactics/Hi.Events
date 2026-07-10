@@ -1,6 +1,6 @@
 import {t} from "@lingui/macro";
 import {NavLink, useNavigate, useParams, useLocation} from "react-router";
-import {ActionIcon, Alert, Button, Group, SimpleGrid, Text, Tooltip} from "@mantine/core";
+import {ActionIcon, Alert, Button, Group, Image, SimpleGrid, Text, Tooltip} from "@mantine/core";
 import {
     IconBuilding,
     IconCalendar,
@@ -588,6 +588,21 @@ export const OrderSummaryAndProducts = () => {
                 />
 
                 {order?.status === 'AWAITING_OFFLINE_PAYMENT' && <OfflinePaymentInstructions event={event}/>}
+
+                {order?.payment_receipt_url && (
+                    <div style={{marginTop: '20px', marginBottom: '40px'}}>
+                        <h2>{t`Payment Receipt`}</h2>
+                        <Card>
+                            <Image
+                                src={order.payment_receipt_url}
+                                alt={t`Payment receipt`}
+                                radius="sm"
+                                fit="contain"
+                                h={300}
+                            />
+                        </Card>
+                    </div>
+                )}
 
                 <h1 className={classes.heading}>{t`Order Details`}</h1>
 
