@@ -490,8 +490,19 @@ $router->prefix('/admin')->middleware(['auth:api'])->group(
 
 /**
  * Public routes
+ *
+ * The route prefix is derived from APP_CDN_URL (if set), falling back to '/public'.
  */
-$router->prefix('/public')->group(
+$publicRoutePrefix = '/public';
+$cdnUrl = env('APP_CDN_URL');
+if ($cdnUrl) {
+    $parsedPath = parse_url($cdnUrl, PHP_URL_PATH);
+    if ($parsedPath && $parsedPath !== '/') {
+        $publicRoutePrefix = rtrim($parsedPath, '/');
+    }
+}
+
+$router->prefix($publicRoutePrefix)->group(
     function (Router $router): void {
         // Events
         $router->get('/events/{event_id}', GetEventPublicAction::class);

@@ -30,7 +30,8 @@ publicApi.interceptors.request.use((config) => {
         ? getConfig('VITE_API_URL_SERVER')
         : getConfig('VITE_API_URL_CLIENT');
 
-    config.baseURL = `${baseUrl}/public`;
+    const prefix = getConfig('VITE_API_PUBLIC_PREFIX') || '/public';
+    config.baseURL = `${baseUrl}${prefix}`;
     return config;
 }, (error) => {
     return Promise.reject(error);
