@@ -37,6 +37,17 @@ class Currency
         return $formatter->formatCurrency($amount, $currencyCode);
     }
 
+    public static function formatForPdf(float|int $amount, string $currencyCode, string $locale = 'en_US'): string
+    {
+        $formatted = self::format($amount, $currencyCode, $locale);
+
+        if (mb_check_encoding($formatted, 'ASCII')) {
+            return $formatted;
+        }
+
+        return strtoupper($currencyCode) . ' ' . number_format((float) $amount, 2, '.', ',');
+    }
+
     public static function round(float $value, $precision = 2): float
     {
         return round(

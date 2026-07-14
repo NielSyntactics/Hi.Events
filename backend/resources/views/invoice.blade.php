@@ -330,7 +330,7 @@
             @else
                 <span class="info-label">{{ __('Amount Due') }}</span>
             @endif
-            <span class="info-value">{{ Currency::format($order->getTotalGross(), $order->getCurrency()) }}</span>
+            <span class="info-value">{{ Currency::formatForPdf($order->getTotalGross(), $order->getCurrency()) }}</span>
         </td>
         <td>
             <span class="info-label">{{ __('Status') }}</span>
@@ -385,22 +385,22 @@
             <td class="align-right">
                 @if($orderItem['price_before_discount'])
                     <div
-                        class="item-price-original">{{ Currency::format($orderItem['price_before_discount'], $order->getCurrency()) }}</div>
+                        class="item-price-original">{{ Currency::formatForPdf($orderItem['price_before_discount'], $order->getCurrency()) }}</div>
                     <div
-                        class="item-price-discounted">{{ Currency::format($orderItem['price'], $order->getCurrency()) }}</div>
+                        class="item-price-discounted">{{ Currency::formatForPdf($orderItem['price'], $order->getCurrency()) }}</div>
                 @else
-                    {{ Currency::format($orderItem['price'], $order->getCurrency()) }}
+                    {{ Currency::formatForPdf($orderItem['price'], $order->getCurrency()) }}
                 @endif
             </td>
             <td class="align-right">{{ $orderItem['quantity'] }}</td>
             <td class="align-right">
                 @if($orderItem['price_before_discount'])
                     <div
-                        class="item-price-original">{{ Currency::format($orderItem['price_before_discount'] * $orderItem['quantity'], $order->getCurrency()) }}</div>
+                        class="item-price-original">{{ Currency::formatForPdf($orderItem['price_before_discount'] * $orderItem['quantity'], $order->getCurrency()) }}</div>
                     <div
-                        class="item-price-discounted">{{ Currency::format($orderItem['total_before_additions'], $order->getCurrency()) }}</div>
+                        class="item-price-discounted">{{ Currency::formatForPdf($orderItem['total_before_additions'], $order->getCurrency()) }}</div>
                 @else
-                    {{ Currency::format($orderItem['total_before_additions'], $order->getCurrency()) }}
+                    {{ Currency::formatForPdf($orderItem['total_before_additions'], $order->getCurrency()) }}
                 @endif
             </td>
         </tr>
@@ -411,13 +411,13 @@
 <table class="totals">
     <tr class="subtotal">
         <td>{{ __('Subtotal') }}</td>
-        <td>{{ Currency::format($order->getTotalBeforeAdditions(), $order->getCurrency()) }}</td>
+        <td>{{ Currency::formatForPdf($order->getTotalBeforeAdditions(), $order->getCurrency()) }}</td>
     </tr>
 
     @if($totalDiscount > 0)
         <tr class="breakdown">
             <td>{{ __('Total Discount') }}</td>
-            <td>-{{ Currency::format($totalDiscount, $order->getCurrency()) }}</td>
+            <td>-{{ Currency::formatForPdf($totalDiscount, $order->getCurrency()) }}</td>
         </tr>
     @endif
 
@@ -429,12 +429,12 @@
                     @else
                         {{ $order->getCurrency() }}
                     @endif)</td>
-                <td>{{ Currency::format($tax['value'], $order->getCurrency()) }}</td>
+                <td>{{ Currency::formatForPdf($tax['value'], $order->getCurrency()) }}</td>
             </tr>
         @endforeach
         <tr class="subtotal">
             <td>{{ __('Total Tax') }}</td>
-            <td>{{ Currency::format($order->getTotalTax(), $order->getCurrency()) }}</td>
+            <td>{{ Currency::formatForPdf($order->getTotalTax(), $order->getCurrency()) }}</td>
         </tr>
     @endif
 
@@ -446,28 +446,28 @@
                     @else
                         {{ $order->getCurrency() }}
                     @endif)</td>
-                <td>{{ Currency::format($fee['value'], $order->getCurrency()) }}</td>
+                <td>{{ Currency::formatForPdf($fee['value'], $order->getCurrency()) }}</td>
             </tr>
         @endforeach
         <tr class="subtotal">
             <td>{{ __('Total Service Fee') }}</td>
-            <td>{{ Currency::format($order->getTotalFee(), $order->getCurrency()) }}</td>
+            <td>{{ Currency::formatForPdf($order->getTotalFee(), $order->getCurrency()) }}</td>
         </tr>
     @endif
 
     <tr class="total-line">
         <td>{{ __('Total') }}</td>
-        <td>{{ Currency::format($order->getTotalGross(), $order->getCurrency()) }}</td>
+        <td>{{ Currency::formatForPdf($order->getTotalGross(), $order->getCurrency()) }}</td>
     </tr>
 
     @if($isPaid)
         <tr class="amount-paid-line">
             <td>{{ __('Amount Paid') }}</td>
-            <td>-{{ Currency::format($order->getTotalGross(), $order->getCurrency()) }}</td>
+            <td>-{{ Currency::formatForPdf($order->getTotalGross(), $order->getCurrency()) }}</td>
         </tr>
         <tr class="balance-due-line">
             <td>{{ __('Balance Due') }}</td>
-            <td>{{ Currency::format(0, $order->getCurrency()) }}</td>
+            <td>{{ Currency::formatForPdf(0, $order->getCurrency()) }}</td>
         </tr>
     @endif
 </table>
