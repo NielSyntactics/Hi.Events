@@ -14,6 +14,16 @@ interface ImageViewerProps {
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 5;
 const ZOOM_STEP = 0.25;
+const BOUND_PADDING = 50;
+
+const clampPosition = (x: number, y: number, zoom: number, viewportWidth: number, viewportHeight: number) => {
+    const maxX = Math.max(0, (viewportWidth * (zoom - 1)) / 2 + BOUND_PADDING);
+    const maxY = Math.max(0, (viewportHeight * (zoom - 1)) / 2 + BOUND_PADDING);
+    return {
+        x: Math.max(-maxX, Math.min(maxX, x)),
+        y: Math.max(-maxY, Math.min(maxY, y)),
+    };
+};
 
 export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
     const [zoom, setZoom] = useState(1);
@@ -37,7 +47,16 @@ export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
     const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault();
         const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-        setZoom(prev => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta)));
+        setZoom(prev => {
+            const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta));
+            if (newZoom <= 1) {
+                setPosition({x: 0, y: 0});
+            } else if (containerRef.current) {
+                const {width, height} = containerRef.current.getBoundingClientRect();
+                setPosition(pos => clampPosition(pos.x, pos.y, newZoom, width, height));
+            }
+            return newZoom;
+        });
     }, []);
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -48,11 +67,11 @@ export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
     }, [zoom, position]);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        if (isDragging && zoom > 1) {
-            setPosition({
-                x: e.clientX - dragStart.x,
-                y: e.clientY - dragStart.y,
-            });
+        if (isDragging && zoom > 1 && containerRef.current) {
+            const {width, height} = containerRef.current.getBoundingClientRect();
+            const rawX = e.clientX - dragStart.x;
+            const rawY = e.clientY - dragStart.y;
+            setPosition(clampPosition(rawX, rawY, zoom, width, height));
         }
     }, [isDragging, dragStart, zoom]);
 
@@ -78,6 +97,9 @@ export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
             const newZoom = Math.max(MIN_ZOOM, prev - ZOOM_STEP);
             if (newZoom <= 1) {
                 setPosition({x: 0, y: 0});
+            } else if (containerRef.current) {
+                const {width, height} = containerRef.current.getBoundingClientRect();
+                setPosition(pos => clampPosition(pos.x, pos.y, newZoom, width, height));
             }
             return newZoom;
         });
