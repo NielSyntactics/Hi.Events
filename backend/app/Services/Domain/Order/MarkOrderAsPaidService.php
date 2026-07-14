@@ -81,7 +81,7 @@ class MarkOrderAsPaidService
 
             $this->updateOrderStatus($orderId);
 
-            $this->updateOrderInvoice($orderId);
+            $updatedInvoice = $this->updateOrderInvoice($orderId);
 
             $updatedOrder = $this->orderRepository
                 ->loadRelation(OrderItemDomainObject::class)
@@ -116,14 +116,14 @@ class MarkOrderAsPaidService
                 event: $event,
                 organizer: $event->getOrganizer(),
                 eventSettings: $event->getEventSettings(),
-                invoice: $order->getLatestInvoice(),
+                invoice: $updatedInvoice,
             );
 
             return $updatedOrder;
         });
     }
 
-    private function updateOrderInvoice(int $orderId): void
+    private function updateOrderInvoice(int $orderId): ?InvoiceDomainObject
     {
         $invoice = $this->invoiceRepository->findLatestInvoiceForOrder($orderId);
 
@@ -131,7 +131,11 @@ class MarkOrderAsPaidService
             $this->invoiceRepository->updateFromArray($invoice->getId(), [
                 'status' => InvoiceStatus::PAID->name,
             ]);
+
+            return $this->invoiceRepository->findById($invoice->getId());
         }
+
+        return null;
     }
 
     private function updateOrderStatus(int $orderId): void
