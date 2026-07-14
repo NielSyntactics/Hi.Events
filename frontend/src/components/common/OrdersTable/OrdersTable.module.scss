@@ -210,6 +210,61 @@
   }
 }
 
+// Attachment Section
+.attachmentButton {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    border-color: var(--mantine-color-primary-filled);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+  }
+
+  &:hover .attachmentOverlay {
+    opacity: 1;
+  }
+}
+
+.attachmentThumbnail {
+  width: 48px;
+  height: 48px;
+  display: block;
+  object-fit: cover;
+}
+
+.attachmentFallback {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-5);
+  border-radius: 4px;
+}
+
+.attachmentOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: white;
+}
+
+.noAttachment {
+  user-select: none;
+}
+
 // Actions Section
 .actionsMenu {
   display: flex;

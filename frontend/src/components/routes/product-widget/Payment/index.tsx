@@ -163,7 +163,7 @@ const Payment = () => {
                         {order?.is_payment_required ? (
                             <Group gap={8} wrap="nowrap">
                                 <IconLock size={16}/>
-                                <Text fw={600}>{t`Pay`} {formatCurrency(order.total_gross, order.currency)}</Text>
+                                <Text fw={600}>{t`Confirm Payment`}</Text>
                             </Group>
                         ) : t`Complete Payment`}
                     </Button>

@@ -165,7 +165,7 @@ const WelcomeHeader = ({order, event, allowSelfEdit}: { order: Order; event: Eve
         'COMPLETED': t`You're going to ${event.title}!`,
         'CANCELLED': t`Your order has been cancelled`,
         'RESERVED': null,
-        'AWAITING_OFFLINE_PAYMENT': t`Your order is awaiting payment`,
+        'AWAITING_OFFLINE_PAYMENT': t`Your order will be reviewed and confirmed.`,
         'ABANDONED': null,
     }[order.status];
 

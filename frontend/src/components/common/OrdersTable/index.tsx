@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {Anchor, Button, Group, Menu, Popover, Text, Tooltip} from '@mantine/core';
+import {Anchor, Button, Group, Menu, Popover, Text, Tooltip, UnstyledButton} from '@mantine/core';
 import {Event, IdParam, Invoice, MessageType, Order} from "../../../types.ts";
 import {
     IconAlertCircle,
@@ -21,7 +21,8 @@ import {
     IconSend,
     IconTicket,
     IconTrash,
-    IconX
+    IconX,
+    IconZoomIn
 } from "@tabler/icons-react";
 import {relativeDate} from "../../../utilites/dates.ts";
 import {ManageOrderModal} from "../../modals/ManageOrderModal";
@@ -30,6 +31,7 @@ import {useMemo, useState} from "react";
 import {CancelOrderModal} from "../../modals/CancelOrderModal";
 import {SendMessageModal} from "../../modals/SendMessageModal";
 import {NoResultsSplash} from "../NoResultsSplash";
+import {ImageViewer} from "../ImageViewer";
 import {RefundOrderModal} from "../../modals/RefundOrderModal";
 import classes from "./OrdersTable.module.scss";
 import {useResendOrderConfirmation} from "../../../mutations/useResendOrderConfirmation.ts";
@@ -58,6 +60,8 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
     const [isRefundModalOpen, refundModal] = useDisclosure(false);
     const [orderId, setOrderId] = useState<IdParam>();
     const [emailPopoverId, setEmailPopoverId] = useState<IdParam | null>(null);
+    const [imageViewerOpened, {open: openImageViewer, close: closeImageViewer}] = useDisclosure(false);
+    const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
     const resendConfirmationMutation = useResendOrderConfirmation();
     const markAsPaidMutation = useMarkOrderAsPaid();
     const clipboard = useClipboard({timeout: 2000});
@@ -119,6 +123,11 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
     const handleMessageFromEmail = (order: Order) => {
         setEmailPopoverId(null);
         handleModalClick(order.id, messageModal);
+    };
+
+    const handleViewReceipt = (url: string) => {
+        setSelectedImageUrl(url);
+        openImageViewer();
     };
 
     const formatTime = (dateString: string): string => {
@@ -371,6 +380,44 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
                 },
             },
             {
+                id: 'attachment',
+                header: t`Attachment`,
+                enableHiding: true,
+                cell: (info: CellContext<Order, unknown>) => {
+                    const order = info.row.original;
+                    if (!order.payment_receipt_url) {
+                        return (
+                            <Text className={classes.noAttachment} size="sm" c="dimmed">
+                                -
+                            </Text>
+                        );
+                    }
+                    return (
+                        <UnstyledButton
+                            onClick={() => handleViewReceipt(order.payment_receipt_url!)}
+                            className={classes.attachmentButton}
+                        >
+                            <img
+                                src={order.payment_receipt_url}
+                                alt={t`Payment receipt`}
+                                className={classes.attachmentThumbnail}
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                    if (fallback) fallback.style.display = 'flex';
+                                }}
+                            />
+                            <div className={classes.attachmentFallback} style={{display: 'none'}}>
+                                <IconFileOff size={20}/>
+                            </div>
+                            <div className={classes.attachmentOverlay}>
+                                <IconZoomIn size={18}/>
+                            </div>
+                        </UnstyledButton>
+                    );
+                },
+            },
+            {
                 id: 'payment',
                 header: t`Payment`,
                 enableHiding: true,
@@ -493,6 +540,13 @@ export const OrdersTable = ({orders, event}: OrdersTableProps) => {
                     />}
                 </>
             )}
+
+            <ImageViewer
+                opened={imageViewerOpened}
+                onClose={closeImageViewer}
+                src={selectedImageUrl || ''}
+                alt={t`Payment receipt`}
+            />
         </>
     )
 };
