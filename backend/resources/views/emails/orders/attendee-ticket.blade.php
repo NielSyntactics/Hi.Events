@@ -48,13 +48,6 @@
 </tr>
 </table>
 
-@if($order->isOrderAwaitingOfflinePayment())
-<div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px 20px; margin: 24px 0;">
-    <div style="font-size: 15px; font-weight: 600; color: #92400e; margin-bottom: 8px;">{{ __('Payment Instructions') }}</div>
-    <div style="font-size: 14px; color: #78350f;">{!! $eventSettings->getOfflinePaymentInstructions() !!}</div>
-</div>
-@endif
-
 {{-- Event Details --}}
 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 24px 0;">
 <div style="font-size: 17px; font-weight: 600; color: #0f172a; margin-bottom: 16px;">{{ __('Event Details') }}</div>
