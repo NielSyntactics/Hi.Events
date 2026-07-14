@@ -22,6 +22,8 @@ import {InputLabelWithHelp} from "../../common/InputLabelWithHelp";
 import classes from './ManageOrderModal.module.scss';
 import {EditOrderPayload} from "../../../api/order.client.ts";
 import {SideDrawer} from "../../common/SideDrawer";
+import {ImageViewer} from "../../common/ImageViewer";
+import {useDisclosure} from "@mantine/hooks";
 
 interface ManageOrderModalProps {
     orderId: IdParam;
@@ -37,6 +39,8 @@ export const ManageOrderModal = ({onClose, orderId}: GenericModalProps & ManageO
     const [activeTab, setActiveTab] = useState("view");
     const errorHandler = useFormErrorResponseHandler();
     const mutation = useEditOrder();
+    const [imageViewerOpened, {open: openImageViewer, close: closeImageViewer}] = useDisclosure(false);
+    const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
 
     const form = useForm({
         initialValues: {
@@ -112,6 +116,11 @@ export const ManageOrderModal = ({onClose, orderId}: GenericModalProps & ManageO
                         radius="sm"
                         fit="contain"
                         h={300}
+                        style={{cursor: 'pointer'}}
+                        onClick={() => {
+                            setSelectedImageUrl(order.payment_receipt_url ?? null);
+                            openImageViewer();
+                        }}
                     />
                 </Box>
             ) : null,
@@ -196,44 +205,53 @@ export const ManageOrderModal = ({onClose, orderId}: GenericModalProps & ManageO
     );
 
     return (
-        <SideDrawer
-            opened={true}
-            onClose={onClose}
-            size="lg"
-            padding="md"
-        >
-            <Stack className={classes.container}>
-                <div className={classes.header}>
-                    <div className={classes.orderInfo}>
-                        <Text fz="sm" c="dimmed" mb={4}>Order Reference</Text>
-                        <Text fz="xl" fw={600}>{order.public_id}</Text>
+        <>
+            <SideDrawer
+                opened={true}
+                onClose={onClose}
+                size="lg"
+                padding="md"
+            >
+                <Stack className={classes.container}>
+                    <div className={classes.header}>
+                        <div className={classes.orderInfo}>
+                            <Text fz="sm" c="dimmed" mb={4}>Order Reference</Text>
+                            <Text fz="xl" fw={600}>{order.public_id}</Text>
+                        </div>
+                        <OrderStatusBadge order={order} variant="outline"/>
                     </div>
-                    <OrderStatusBadge order={order} variant="outline"/>
-                </div>
 
-                <Tabs value={activeTab} onChange={setActiveTab as any}>
-                    <Tabs.List>
-                        <Tabs.Tab value="view" leftSection={<IconInfoCircle size={16}/>}>
-                            {t`View`}
-                        </Tabs.Tab>
-                        <Tabs.Tab value="edit" leftSection={<IconEdit size={16}/>}>
-                            {t`Edit`}
-                        </Tabs.Tab>
-                    </Tabs.List>
+                    <Tabs value={activeTab} onChange={setActiveTab as any}>
+                        <Tabs.List>
+                            <Tabs.Tab value="view" leftSection={<IconInfoCircle size={16}/>}>
+                                {t`View`}
+                            </Tabs.Tab>
+                            <Tabs.Tab value="edit" leftSection={<IconEdit size={16}/>}>
+                                {t`Edit`}
+                            </Tabs.Tab>
+                        </Tabs.List>
 
-                    <Box mt="md">
-                        <Tabs.Panel value="view">
-                            <Accordion
-                                items={accordionItems}
-                                defaultValue="details"
-                            />
-                        </Tabs.Panel>
-                        <Tabs.Panel value="edit">
-                            {editContent}
-                        </Tabs.Panel>
-                    </Box>
-                </Tabs>
-            </Stack>
-        </SideDrawer>
+                        <Box mt="md">
+                            <Tabs.Panel value="view">
+                                <Accordion
+                                    items={accordionItems}
+                                    defaultValue="details"
+                                />
+                            </Tabs.Panel>
+                            <Tabs.Panel value="edit">
+                                {editContent}
+                            </Tabs.Panel>
+                        </Box>
+                    </Tabs>
+                </Stack>
+            </SideDrawer>
+
+            <ImageViewer
+                opened={imageViewerOpened}
+                onClose={closeImageViewer}
+                src={selectedImageUrl || ''}
+                alt={t`Payment receipt`}
+            />
+        </>
     );
 };

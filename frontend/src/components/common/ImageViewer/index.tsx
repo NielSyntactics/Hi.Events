@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import {ActionIcon, Group, Text, Tooltip} from "@mantine/core";
 import {IconAlertCircle, IconMinus, IconPlus, IconX, IconZoomIn} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
@@ -138,7 +139,7 @@ export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
     if (!opened) return null;
 
     if (!src) {
-        return (
+        return createPortal(
             <div className={classes.overlay}>
                 <div className={classes.errorState}>
                     <IconAlertCircle size={48} stroke={1.5}/>
@@ -155,13 +156,14 @@ export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
                         <IconX size={22}/>
                     </ActionIcon>
                 </Tooltip>
-            </div>
+            </div>,
+            document.body
         );
     }
 
     const zoomPercent = Math.round(zoom * 100);
 
-    return (
+    return createPortal(
         <div
             ref={containerRef}
             className={classes.overlay}
@@ -238,6 +240,7 @@ export const ImageViewer = ({opened, onClose, src, alt}: ImageViewerProps) => {
                     <IconX size={22}/>
                 </ActionIcon>
             </Tooltip>
-        </div>
+        </div>,
+        document.body
     );
 };

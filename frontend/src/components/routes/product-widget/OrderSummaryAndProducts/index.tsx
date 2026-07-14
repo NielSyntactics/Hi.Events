@@ -20,6 +20,7 @@ import {
     IconUser
 } from "@tabler/icons-react";
 import {useEffect, useState} from "react";
+import {useDisclosure} from "@mantine/hooks";
 import {useQueryClient} from "@tanstack/react-query";
 
 import {useGetOrderPublic, GET_ORDER_PUBLIC_QUERY_KEY} from "../../../../queries/useGetOrderPublic.ts";
@@ -40,6 +41,7 @@ import {InlineOrderSummary} from "../../../common/InlineOrderSummary";
 import {CheckoutContent} from "../../../layouts/Checkout/CheckoutContent";
 import {EditAttendeeModal} from "./EditAttendeeModal";
 import {EditOrderModal} from "./EditOrderModal";
+import {ImageViewer} from "../../../common/ImageViewer";
 
 import {useEditAttendeePublic} from "../../../../mutations/useEditAttendeePublic";
 import {useEditOrderPublic} from "../../../../mutations/useEditOrderPublic";
@@ -409,6 +411,8 @@ export const OrderSummaryAndProducts = () => {
 
     const [editingAttendee, setEditingAttendee] = useState<Attendee | null>(null);
     const [editOrderModalOpened, setEditOrderModalOpened] = useState(false);
+    const [imageViewerOpened, {open: openImageViewer, close: closeImageViewer}] = useDisclosure(false);
+    const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
 
     useEffect(() => {
         if (eventId && order && (order.status === 'COMPLETED' || order.status === 'AWAITING_OFFLINE_PAYMENT')) {
@@ -592,15 +596,23 @@ export const OrderSummaryAndProducts = () => {
                 {order?.payment_receipt_url && (
                     <div style={{marginTop: '20px', marginBottom: '40px'}}>
                         <h2>{t`Payment Receipt`}</h2>
-                        <Card>
-                            <Image
-                                src={order.payment_receipt_url}
-                                alt={t`Payment receipt`}
-                                radius="sm"
-                                fit="contain"
-                                h={300}
-                            />
-                        </Card>
+                        <div
+                            style={{cursor: 'pointer'}}
+                            onClick={() => {
+                                setSelectedImageUrl(order.payment_receipt_url ?? null);
+                                openImageViewer();
+                            }}
+                        >
+                            <Card>
+                                <Image
+                                    src={order.payment_receipt_url}
+                                    alt={t`Payment receipt`}
+                                    radius="sm"
+                                    fit="contain"
+                                    h={300}
+                                />
+                            </Card>
+                        </div>
                     </div>
                 )}
 
@@ -683,6 +695,13 @@ export const OrderSummaryAndProducts = () => {
                     }}
                 />
             )}
+
+            <ImageViewer
+                opened={imageViewerOpened}
+                onClose={closeImageViewer}
+                src={selectedImageUrl || ''}
+                alt={t`Payment receipt`}
+            />
         </>
     );
 };
