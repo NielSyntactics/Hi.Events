@@ -1,26 +1,21 @@
 @php use Carbon\Carbon; use HiEvents\Helper\Currency; use HiEvents\Helper\DateHelper; @endphp
-@php /** @uses /backend/app/Mail/Organizer/OrderSummaryForOrganizer.php */ @endphp
+@php /** @uses /backend/app/Mail/Organizer/OrderMarkedAsPaidForOrganizer.php */ @endphp
 @php /** @var \HiEvents\DomainObjects\OrderDomainObject $order */ @endphp
 @php /** @var \HiEvents\DomainObjects\EventDomainObject $event */ @endphp
 @php /** @var \HiEvents\DomainObjects\EventSettingDomainObject $eventSettings */ @endphp
 @php /** @var array $attendeeTicketUrls */ @endphp
 
 <x-mail::message>
-# {{ __('New Order Received!') }} 🎉
+# {{ __('Order Marked as Paid!') }} ✅
 
-{{ __('You\'ve received a new order for') }} <strong>{{ $event->getTitle() }}</strong>.
+{{ __('An order for :eventTitle has been marked as paid.', ['eventTitle' => $event->getTitle()]) }}
 
 {{-- Order Reference --}}
-<div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
-    <div style="font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">{{ __('Order Reference') }}</div>
-    <div style="font-size: 28px; font-weight: 700; color: #0f172a; letter-spacing: 0.02em;">{{ $order->getPublicId() }}</div>
+<div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: center;">
+    <div style="font-size: 13px; color: #166534; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">{{ __('Order Reference') }}</div>
+    <div style="font-size: 28px; font-weight: 700; color: #14532d; letter-spacing: 0.02em;">{{ $order->getPublicId() }}</div>
+    <div style="font-size: 14px; color: #16a34a; font-weight: 500; margin-top: 8px;">✓ {{ __('Payment Received') }}</div>
 </div>
-
-@if($order->isOrderAwaitingOfflinePayment())
-<div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px 20px; margin: 24px 0;">
-    <div style="font-size: 14px; color: #92400e; font-weight: 500;">⏳ {{ __('This order is awaiting offline payment. The buyer will upload a receipt once payment is made.') }}</div>
-</div>
-@endif
 
 {{-- Order Details --}}
 <table width="100%" cellpadding="0" cellspacing="0" style="margin: 24px 0;">
@@ -41,7 +36,7 @@
 </td>
 <td width="50%" style="padding-left: 12px; padding-top: 16px; vertical-align: top;">
 <div style="font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">{{ __('Payment Status') }}</div>
-<div style="font-size: 15px; font-weight: 500; @if($order->isOrderAwaitingOfflinePayment()) color: #d97706; @else color: #16a34a; @endif">{{ $order->isOrderAwaitingOfflinePayment() ? __('Awaiting Offline Payment') : __('Payment Received') }}</div>
+<div style="font-size: 15px; font-weight: 500; color: #16a34a;">{{ __('Payment Received') }}</div>
 </td>
 </tr>
 </table>
@@ -73,13 +68,6 @@
 </tr>
 </table>
 </div>
-
-@if($eventSettings && $eventSettings->getPostCheckoutMessage() && $order->isOrderCompleted())
-<div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px 20px; margin: 24px 0;">
-    <div style="font-size: 15px; font-weight: 600; color: #0c4a6e; margin-bottom: 8px;">{{ __('Additional Information') }}</div>
-    <div style="font-size: 14px; color: #075985;">{!! $eventSettings->getPostCheckoutMessage() !!}</div>
-</div>
-@endif
 
 {{-- Attendees / Tickets --}}
 @if($order->getAttendees() && count($order->getAttendees()) > 0)

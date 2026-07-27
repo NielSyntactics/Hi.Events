@@ -45,19 +45,14 @@ export const PaymentReturn = () => {
         if (!paymentIntentQuery.isFetched) {
             return;
         }
-        if (paymentIntentQuery.data?.status === 'succeeded') {
-            if (!hasTrackedPurchase.current && order) {
-                hasTrackedPurchase.current = true;
-                const totalCents = Math.round((order.total_gross || 0) * 100);
-                trackEvent(AnalyticsEvents.PURCHASE_COMPLETED_PAID, { value: totalCents });
-            }
-            navigate(eventCheckoutPath(eventId, orderShortId, 'summary'));
-        } else {
+        if (paymentIntentQuery.data?.status !== 'succeeded') {
             // At this point we've tried multiple times to confirm the payment and failed.
             // This could be due to a network error on our end, or a problem with the payment provider (Stripe).
             // This should be a rare occurrence, but we should handle it gracefully.
             setCannotConfirmPayment(true);
         }
+        // If succeeded, don't navigate yet — wait for the order polling effect
+        // to confirm the order is COMPLETED in the database before navigating.
     }, [paymentIntentQuery.isFetched]);
 
     useEffect(() => {
@@ -77,6 +72,14 @@ export const PaymentReturn = () => {
             navigate(eventCheckoutPath(eventId, orderShortId, 'payment') + '?payment_failed=true');
         }
     }, [order]);
+
+    // If polling stopped and payment intent succeeded but order is still not COMPLETED,
+    // navigate to summary anyway — the webhook may have updated it but polling missed it.
+    useEffect(() => {
+        if (!shouldPoll && paymentIntentQuery.data?.status === 'succeeded' && (!order || order.status !== 'COMPLETED')) {
+            navigate(eventCheckoutPath(eventId, orderShortId, 'summary'));
+        }
+    }, [shouldPoll, paymentIntentQuery.data?.status, order?.status]);
 
     return (
         <CheckoutContent>

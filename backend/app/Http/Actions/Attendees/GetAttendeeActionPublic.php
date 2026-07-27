@@ -3,6 +3,7 @@
 namespace HiEvents\Http\Actions\Attendees;
 
 use HiEvents\DomainObjects\Generated\AttendeeDomainObjectAbstract;
+use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\Http\Actions\BaseAction;
@@ -34,6 +35,9 @@ class GetAttendeeActionPublic extends BaseAction
                         domainObject: ProductPriceDomainObject::class,
                     ),
                 ], name: 'product'))
+            ->loadRelation(new Relationship(
+                domainObject: OrderDomainObject::class,
+                name: 'order'))
             ->findFirstWhere([
                 AttendeeDomainObjectAbstract::SHORT_ID => $attendeeShortId
             ]);

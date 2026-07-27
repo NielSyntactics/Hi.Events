@@ -26,6 +26,11 @@ class AttendeeResourcePublic extends JsonResource
             'product_price_id' => $this->getProductPriceId(),
             'product' => $this->when((bool)$this->getProduct(), fn() => new ProductMinimalResourcePublic($this->getProduct())),
             'locale' => $this->getLocale(),
+            'order_id' => $this->getOrderId(),
+            'order_short_id' => $this->when(
+                $this->getOrder() !== null,
+                fn() => $this->getOrder()?->getShortId()
+            ),
         ];
     }
 }

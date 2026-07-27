@@ -19,6 +19,7 @@ class OrderResourcePublic extends BaseResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->getId(),
             'short_id' => $this->getShortId(),
             'total_before_additions' => $this->getTotalBeforeAdditions(),
             'total_tax' => $this->getTotalTax(),

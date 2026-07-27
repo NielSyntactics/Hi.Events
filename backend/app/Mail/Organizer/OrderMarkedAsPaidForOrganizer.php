@@ -16,40 +16,25 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Str;
 
 /**
- * @uses /backend/resources/views/emails/orders/organizer/summary-for-organizer.blade.php
+ * @uses /backend/resources/views/emails/orders/organizer/order-marked-as-paid-for-organizer.blade.php
  */
-class OrderSummaryForOrganizer extends BaseMail
+class OrderMarkedAsPaidForOrganizer extends BaseMail
 {
-    private OrderDomainObject $order;
-
-    private EventDomainObject $event;
-
-    private EventSettingDomainObject $eventSettings;
-
-    private ?InvoiceDomainObject $invoice;
-
     public function __construct(
-        OrderDomainObject $order,
-        EventDomainObject $event,
-        ?EventSettingDomainObject $eventSettings = null,
-        ?InvoiceDomainObject $invoice = null,
-    ) {
+        private readonly OrderDomainObject        $order,
+        private readonly EventDomainObject        $event,
+        private readonly EventSettingDomainObject $eventSettings,
+        private readonly ?InvoiceDomainObject     $invoice = null,
+    )
+    {
         parent::__construct();
-
-        $this->order = $order;
-        $this->event = $event;
-        $this->eventSettings = $eventSettings ?? $event->getEventSettings();
-        $this->invoice = $invoice;
     }
 
     public function envelope(): Envelope
     {
-        $subject = $this->order->getTotalGross() > 0
-            ? __('New order for :amount for :event 🎉', [
-                    'amount' => Currency::format($this->order->getTotalGross(), $this->event->getCurrency()),
-                    'event' => Str::limit($this->event->getTitle(), 75)]
-            )
-            : __('New order for :event 🎉', ['event' => Str::limit($this->event->getTitle(), 75)]);
+        $subject = __('An order has been marked as paid for :event 🎉', [
+            'event' => Str::limit($this->event->getTitle(), 75),
+        ]);
 
         return new Envelope(
             subject: $subject,
@@ -70,7 +55,7 @@ class OrderSummaryForOrganizer extends BaseMail
         }
 
         return new Content(
-            markdown: 'emails.orders.organizer.summary-for-organizer',
+            markdown: 'emails.orders.organizer.order-marked-as-paid-for-organizer',
             with: [
                 'event' => $this->event,
                 'order' => $this->order,

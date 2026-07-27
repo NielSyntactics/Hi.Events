@@ -16,7 +16,8 @@ const getSessionIdentifierFromUrl = (): string | null => {
 export const useGetOrderPublic = (
     eventId: IdParam,
     orderShortId: IdParam,
-    includes: string[] = []
+    includes: string[] = [],
+    enabled: boolean = true,
 ) => {
     const sessionIdentifier = useMemo(getSessionIdentifierFromUrl, []);
 
@@ -36,6 +37,7 @@ export const useGetOrderPublic = (
             );
             return data;
         },
+        enabled: enabled && !!eventId && !!orderShortId,
         refetchOnWindowFocus: false,
         staleTime: 500,
         retryOnMount: false,

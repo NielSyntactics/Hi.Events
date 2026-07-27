@@ -577,6 +577,7 @@ export interface Attendee {
     product?: Product;
     product_price_id: number;
     order_id: number;
+    order_short_id?: string;
     status: 'ACTIVE' | 'CANCELLED' | 'AWAITING_PAYMENT';
     first_name: string;
     last_name: string;

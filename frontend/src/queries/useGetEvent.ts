@@ -5,7 +5,7 @@ import {AxiosError} from "axios";
 
 export const GET_EVENT_QUERY_KEY = 'getEvent';
 
-export const useGetEvent = (eventId: IdParam) => {
+export const useGetEvent = (eventId: IdParam, enabled: boolean = true) => {
     return useQuery<Event, AxiosError>({
         queryKey: [GET_EVENT_QUERY_KEY, eventId],
 
@@ -14,6 +14,7 @@ export const useGetEvent = (eventId: IdParam) => {
             return data;
         },
 
+        enabled: enabled && !!eventId,
         staleTime: 5
     });
 };

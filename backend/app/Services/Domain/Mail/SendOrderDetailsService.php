@@ -11,6 +11,7 @@ use HiEvents\DomainObjects\OrderItemDomainObject;
 use HiEvents\DomainObjects\OrganizerDomainObject;
 use HiEvents\Mail\Order\OrderFailed;
 use HiEvents\Mail\Order\OrderMarkedAsPaid;
+use HiEvents\Mail\Organizer\OrderMarkedAsPaidForOrganizer;
 use HiEvents\Mail\Organizer\OrderSummaryForOrganizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
@@ -103,6 +104,29 @@ class SendOrderDetailsService
             ));
     }
 
+    public function sendOrderMarkedAsPaidForOrganizerEmail(
+        OrderDomainObject        $order,
+        EventDomainObject        $event,
+        EventSettingDomainObject $eventSettings,
+        ?InvoiceDomainObject     $invoice = null
+    ): void {
+        $order = $this->orderRepository
+            ->loadRelation(OrderItemDomainObject::class)
+            ->loadRelation(AttendeeDomainObject::class)
+            ->loadRelation(InvoiceDomainObject::class)
+            ->findById($order->getId());
+
+        $this->mailer
+            ->to($event->getOrganizer()->getEmail())
+            ->locale($order->getLocale())
+            ->send(new OrderMarkedAsPaidForOrganizer(
+                order: $order,
+                event: $event,
+                eventSettings: $eventSettings,
+                invoice: $invoice,
+            ));
+    }
+
     private function sendAttendeeTicketEmails(OrderDomainObject $order, EventDomainObject $event): void
     {
         $sentEmails = [];
@@ -131,6 +155,11 @@ class SendOrderDetailsService
 
         $this->mailer
             ->to($event->getOrganizer()->getEmail())
-            ->send(new OrderSummaryForOrganizer($order, $event));
+            ->send(new OrderSummaryForOrganizer(
+                order: $order,
+                event: $event,
+                eventSettings: $event->getEventSettings(),
+                invoice: $order->getLatestInvoice(),
+            ));
     }
 }

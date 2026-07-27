@@ -119,6 +119,13 @@ class MarkOrderAsPaidService
                 invoice: $updatedInvoice,
             );
 
+            $this->sendOrderDetailsService->sendOrderMarkedAsPaidForOrganizerEmail(
+                order: $updatedOrder,
+                event: $event,
+                eventSettings: $event->getEventSettings(),
+                invoice: $updatedInvoice,
+            );
+
             return $updatedOrder;
         });
     }
