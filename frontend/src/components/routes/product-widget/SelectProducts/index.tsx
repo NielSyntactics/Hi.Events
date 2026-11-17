@@ -35,6 +35,7 @@ import {eventsClientPublic} from "../../../../api/event.client.ts";
 import {promoCodeClientPublic} from "../../../../api/promo-code.client.ts";
 import {IconChevronRight, IconX} from "@tabler/icons-react"
 import {getSessionIdentifier} from "../../../../utilites/sessionIdentifier.ts";
+import {saveCheckoutSession} from "../../../../utilites/checkoutSession.ts";
 import {Constants} from "../../../../constants.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 
@@ -149,6 +150,7 @@ const SelectProducts = (props: SelectProductsProps) => {
 
         onSuccess: (data) => queryClient.invalidateQueries()
             .then(() => {
+                saveCheckoutSession(data.data.short_id, data.data.session_identifier);
                 const url = '/checkout/' + eventId + '/' + data.data.short_id + '/details';
                 if (props.widgetMode === 'embedded') {
                     window.open(
@@ -159,7 +161,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                     return;
                 }
 
-                return navigate(url);
+                return navigate(url + '?session_identifier=' + data.data.session_identifier);
             }),
 
         onError: (error: any) => {

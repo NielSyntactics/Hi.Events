@@ -1,6 +1,7 @@
 import axios from "axios";
 import {isSsr} from "../utilites/helpers";
 import {getConfig} from "../utilites/config";
+import {getCheckoutSession} from "../utilites/checkoutSession";
 
 export const publicApi = axios.create({
     withCredentials: true,
@@ -32,6 +33,15 @@ publicApi.interceptors.request.use((config) => {
 
     const prefix = getConfig('VITE_API_PUBLIC_PREFIX') || '/public';
     config.baseURL = `${baseUrl}${prefix}`;
+
+    const orderShortId = config.url?.match(/\/order\/([^/?]+)/)?.[1];
+    if (orderShortId && !config.url?.includes('session_identifier=') && !config.params?.session_identifier) {
+        const sessionIdentifier = getCheckoutSession(orderShortId);
+        if (sessionIdentifier) {
+            config.params = {...config.params, session_identifier: sessionIdentifier};
+        }
+    }
+
     return config;
 }, (error) => {
     return Promise.reject(error);
