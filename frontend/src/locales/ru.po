@@ -1201,7 +1201,7 @@ msgstr ""
 
 #: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:60
-msgid "Awaiting Offline Payment"
+msgid "Awaiting Payment Confirmation"
 msgstr ""
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:359

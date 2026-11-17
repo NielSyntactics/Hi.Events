@@ -59,7 +59,7 @@ const PaymentStatus = ({order}: { order: Order }) => {
         'AWAITING_PAYMENT': t`Awaiting Payment`,
         'PAYMENT_FAILED': t`Payment Failed`,
         'PAYMENT_RECEIVED': t`Payment Received`,
-        'AWAITING_OFFLINE_PAYMENT': t`Awaiting Offline Payment`,
+        'AWAITING_OFFLINE_PAYMENT': t`Awaiting Payment Confirmation`,
     };
 
     return order?.payment_status ? <span>{paymentStatuses[order.payment_status] || ''}</span> : null;

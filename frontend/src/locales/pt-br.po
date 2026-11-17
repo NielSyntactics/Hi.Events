@@ -1201,8 +1201,8 @@ msgstr "Aguardando pagamento offline"
 
 #: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:60
-msgid "Awaiting Offline Payment"
-msgstr "Aguardando pagamento offline"
+msgid "Awaiting Payment Confirmation"
+msgstr "Aguardando confirmação de pagamento"
 
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:359
 msgid "Awaiting Offline Pmt."

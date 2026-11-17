@@ -41,7 +41,7 @@
 </td>
 <td width="50%" style="padding-left: 12px; padding-top: 16px; vertical-align: top;">
 <div style="font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">{{ __('Payment Status') }}</div>
-<div style="font-size: 15px; font-weight: 500; @if($order->isOrderAwaitingOfflinePayment()) color: #d97706; @else color: #16a34a; @endif">{{ $order->isOrderAwaitingOfflinePayment() ? __('Awaiting Offline Payment') : __('Payment Received') }}</div>
+<div style="font-size: 15px; font-weight: 500; @if($order->isOrderAwaitingOfflinePayment()) color: #d97706; @else color: #16a34a; @endif">{{ $order->isOrderAwaitingOfflinePayment() ? __('Awaiting Payment Confirmation') : __('Payment Received') }}</div>
 </td>
 </tr>
 </table>

@@ -572,7 +572,7 @@ msgstr ""
 #: src/components/routes/event/orders.tsx:25
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:43
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:66
-msgid "Awaiting Offline Payment"
+msgid "Awaiting Payment Confirmation"
 msgstr ""
 
 #: src/components/layouts/CheckIn/index.tsx:228

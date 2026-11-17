@@ -22,7 +22,7 @@ import {withLoadingNotification} from "../../../utilites/withLoadingNotification
 const orderStatuses = [
     {label: t`Completed`, value: 'COMPLETED'},
     {label: t`Cancelled`, value: 'CANCELLED'},
-    {label: t`Awaiting Offline Payment`, value: 'AWAITING_OFFLINE_PAYMENT'},
+    {label: t`Awaiting Payment Confirmation`, value: 'AWAITING_OFFLINE_PAYMENT'},
 ];
 
 const refundStatuses = [
